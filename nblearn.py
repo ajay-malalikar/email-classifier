@@ -1,22 +1,10 @@
 #!/usr/bin/env python3
 
 import os
+import sys
 from enum import Enum
+from nbutils import Model
 import json
-
-
-class Model():
-    def __init__(self, vocab=None, total_spam_words=0, total_ham_words=0, spam_file_count=0,
-                 ham_file_count=0, vocabulary_size=0, j=None):
-        if j is None:
-            self.vocab_dict = vocab
-            self.total_spam_words = total_spam_words
-            self.total_ham_words = total_ham_words
-            self.spam_file_count = spam_file_count
-            self.ham_file_count = ham_file_count
-            self.vocabulary_size = vocabulary_size
-        else:
-            self.__dict__ = json.loads(j)
 
 
 class Category(Enum):
@@ -48,16 +36,16 @@ def build_vocab(file, category):
                     else:
                         vocab_dict[w]['ham_count'] += 1
         data = fs.readline()
+    fs.close()
     return count
 
 
-
-def main():
+def main(path):
     total_spam_words = 0
     total_ham_words = 0
     spam_file_count = 0
     ham_file_count = 0
-    for root, subdir, files in os.walk("train"):
+    for root, subdir, files in os.walk(path):
         if len(files) is not 0:
             for file in files:
                 if 'ham' in root:
@@ -73,6 +61,7 @@ def main():
     json_data = json.dumps(vars(obj))
     fs = open("nbmodel.txt", "w")
     fs.write(json_data)
+    fs.close()
 
     print("Vocabulary Size: " + str(len(vocab_dict)))
     print("Total words in ham: " + str(total_ham_words))
@@ -81,5 +70,5 @@ def main():
     print("Ham file count: " + str(ham_file_count))
 
 if __name__=="__main__":
-    main()
+    main(sys.argv[1])
 
