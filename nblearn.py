@@ -2,17 +2,11 @@
 
 import os
 import sys
-from enum import Enum
-from nbutils import Model
 import json
-
-
-class Category(Enum):
-    spam = 1
-    ham = 2
+from nbutils import Model, Category
 
 vocab_dict = {}
-punctuations = {":": True, ".": True, ";": True, "-": True, "_": True, "|": True, ",": True}
+# punctuations = {":": True, ".": True, ";": True, "-": True, "_": True, "|": True, ",": True}
 
 
 def build_vocab(file, category):
@@ -22,19 +16,19 @@ def build_vocab(file, category):
     while data:
         split_words = data.strip().split()
         for w in split_words:
-            if w not in punctuations:
-                count += 1
-                if w in vocab_dict:
-                    if category is Category.spam:
-                        vocab_dict[w]['spam_count'] += 1
-                    else:
-                        vocab_dict[w]['ham_count'] += 1
+            # if w not in punctuations:
+            count += 1
+            if w in vocab_dict:
+                if category is Category.spam:
+                    vocab_dict[w]['spam_count'] += 1
                 else:
-                    vocab_dict[w] = {'spam_count': 0, 'ham_count': 0}
-                    if category is Category.spam:
-                        vocab_dict[w]['spam_count'] += 1
-                    else:
-                        vocab_dict[w]['ham_count'] += 1
+                    vocab_dict[w]['ham_count'] += 1
+            else:
+                vocab_dict[w] = {'spam_count': 0, 'ham_count': 0}
+                if category is Category.spam:
+                    vocab_dict[w]['spam_count'] += 1
+                else:
+                    vocab_dict[w]['ham_count'] += 1
         data = fs.readline()
     fs.close()
     return count
@@ -69,6 +63,6 @@ def main(path):
     print("Spam file count: " + str(spam_file_count))
     print("Ham file count: " + str(ham_file_count))
 
-if __name__=="__main__":
+if __name__ == "__main__":
     main(sys.argv[1])
 
